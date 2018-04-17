@@ -9,7 +9,7 @@ import com.cxt.fly.service.HelloWorldService2;
  * @author cxt
  * @date   2018/4/17
  */
-@RpcService(value = HelloWorldService.class,version = "helloworld2")
+@RpcService(value = HelloWorldService2.class,version = "helloworld2")
 public class HelloWorldService2Impl implements HelloWorldService2 {
     @Override
     public String say(String username) {

@@ -1,5 +1,6 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -8,9 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class FlyBootstrap {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlyBootstrap.class);
-
     public static void main(String[] args) {
         LOGGER.info("server starting ...");
-        new ClassPathXmlApplicationContext("spring.xml");
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
     }
 }

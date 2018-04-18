@@ -11,6 +11,16 @@
 
     <artifactId>fly-core</artifactId>
     <dependencies>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <!--netty-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -54,7 +64,5 @@
             <artifactId>objenesis</artifactId>
         </dependency>
     </dependencies>
-
-
 
 </project>

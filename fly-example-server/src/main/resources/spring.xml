@@ -7,17 +7,17 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-<context:component-scan base-package="com.cxt.fly.service.impl"/>
+    <context:component-scan base-package="com.cxt.fly.service.impl"/>
 
-<context:property-placeholder location="classpath:fly.properties"/>
+    <context:property-placeholder location="classpath:fly.properties"/>
 
-<bean id="serviceRegistry" class="com.cxt.fly.registry.impl.ZookeeperRegistry">
-    <constructor-arg name="zkAddress" value="${fly.registry_address}"/>
-</bean>
+    <bean id="serviceRegistry" class="com.cxt.fly.registry.impl.ZookeeperRegistry">
+        <constructor-arg name="zkAddress" value="${fly.registry_address}"/>
+    </bean>
 
-<bean id="rpcServer" class="com.cxt.fly.server.RpcServer">
-    <constructor-arg name="serviceAddresss" value="${fly.service_address}"/>
-    <constructor-arg name="zookeeperRegistry" ref="serviceRegistry"/>
-</bean>
+    <bean id="rpcServer" class="com.cxt.fly.server.RpcServer">
+        <constructor-arg name="serviceAddresss" value="${fly.service_address}"/>
+        <constructor-arg name="zookeeperRegistry" ref="serviceRegistry"/>
+    </bean>
 
 </beans>

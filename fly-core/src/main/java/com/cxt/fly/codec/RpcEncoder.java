@@ -1,6 +1,8 @@
 package com.cxt.fly.codec;
 
+import com.cxt.fly.common.Constants;
 import com.cxt.fly.util.KryoUtil;
+import com.cxt.fly.util.ProtostuffUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -12,6 +14,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class RpcEncoder extends MessageToByteEncoder{
     private Class<?> genericClass;
+    private String serializationType = "kyro";
+
+    public RpcEncoder(Class<?> genericClass, String serializationType) {
+        this.genericClass = genericClass;
+        this.serializationType = serializationType;
+    }
 
     public RpcEncoder(Class<?> genericClass) {
         this.genericClass = genericClass;
@@ -20,7 +28,14 @@ public class RpcEncoder extends MessageToByteEncoder{
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         if (genericClass.isInstance(msg)){
-            byte[] bytes = KryoUtil.writeToByteArray(msg);
+            byte[] bytes = null;
+
+            /*选择序列化工具*/
+            if (Constants.KYRO_SERIALIZATION.equals(serializationType)){
+                bytes = KryoUtil.writeToByteArray(msg);
+            }else{
+                bytes = ProtostuffUtil.serialize(msg);
+            }
             /* 编码器先写对象二进制的长度，方便解码器解码知道，要解码的对象到底多长*/
             out.writeInt(bytes.length);
             out.writeBytes(bytes);

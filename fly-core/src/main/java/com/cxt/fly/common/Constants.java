@@ -10,4 +10,6 @@ public interface Constants {
     int ZK_CONNECTION_TIMEOUT = 1000;
 
     String ZK_REGISTRY_PATH = "/registry";
+
+    String KYRO_SERIALIZATION = "kryo";
 }

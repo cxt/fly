@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * @author
+ * RpcClient
+ * @author cxt
  * @date   2018/3/29
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
@@ -41,6 +42,12 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         ctx.close();
     }
 
+    /**
+     * 发送请求
+     * @param request
+     * @return
+     * @throws InterruptedException
+     */
     public RpcResponse send(RpcRequest request) throws InterruptedException {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -52,7 +59,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new RpcEncoder(RpcRequest.class))
-                                    .addLast(new RpcDecoder(RpcDecoder.class))
+                                    .addLast(new RpcDecoder(RpcResponse.class))
                                     .addLast(RpcClient.this);
                         }
                     });

@@ -12,7 +12,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * @author
+ * rpc 客户端代理
+ * 用动态代理创建代理对象，代理对象执行网络请求返回响应内容
+ * @author cxt
  * @date 2018/3/29
  */
 public class RpcProxy {

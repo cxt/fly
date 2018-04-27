@@ -22,6 +22,7 @@ public class RpcProxy {
 
     private String serviceAddress;
     private ServiceDiscover serviceDiscover;
+    private String serializeType;
 
     public RpcProxy(String serviceAddress) {
         this.serviceAddress = serviceAddress;
@@ -29,6 +30,11 @@ public class RpcProxy {
 
     public RpcProxy(ServiceDiscover serviceDiscover) {
         this.serviceDiscover = serviceDiscover;
+    }
+
+    public RpcProxy(ServiceDiscover serviceDiscover, String serializeType) {
+        this.serviceDiscover = serviceDiscover;
+        this.serializeType = serializeType;
     }
 
     @SuppressWarnings("unchecked")
@@ -45,6 +51,7 @@ public class RpcProxy {
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                         /*创建RPC请求*/
                         RpcRequest rpcRequest = RpcRequest.build(method.getDeclaringClass().getName(), version, method.getName(), method.getParameterTypes(), args);
+                        LOGGER.debug(rpcRequest.toString());
 
                         if(null != serviceDiscover){
                             String serviceName = interfaceClass.getName();
@@ -59,7 +66,7 @@ public class RpcProxy {
 
                             /*分割字符串serviceAddress,如127.0.0.1:8080 分割为 127.0.0.1和8080*/
                             String[] hostAndPort = serviceAddress.split(":");
-                            RpcClient rpcClient = new RpcClient(hostAndPort[0],Integer.parseInt(hostAndPort[1]));
+                            RpcClient rpcClient = new RpcClient(hostAndPort[0],Integer.parseInt(hostAndPort[1]),serializeType);
 
                             RpcResponse rpcResponse = rpcClient.send(rpcRequest);
 

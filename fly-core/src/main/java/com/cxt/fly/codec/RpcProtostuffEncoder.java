@@ -1,41 +1,30 @@
 package com.cxt.fly.codec;
 
-import com.cxt.fly.common.Constants;
-import com.cxt.fly.util.KryoUtil;
 import com.cxt.fly.util.ProtostuffUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * 编码器
+ * 编码器 by ProtostuffUtil
+ *
  * @author cxt
- * @date   2018/3/29
+ * @date 2018/3/29
  */
-public class RpcEncoder extends MessageToByteEncoder{
+public class RpcProtostuffEncoder extends MessageToByteEncoder {
     private Class<?> genericClass;
-    private String serializationType = "kyro";
 
-    public RpcEncoder(Class<?> genericClass, String serializationType) {
-        this.genericClass = genericClass;
-        this.serializationType = serializationType;
-    }
-
-    public RpcEncoder(Class<?> genericClass) {
+    public RpcProtostuffEncoder(Class<?> genericClass) {
         this.genericClass = genericClass;
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        if (genericClass.isInstance(msg)){
+        if (genericClass.isInstance(msg)) {
             byte[] bytes = null;
 
             /*选择序列化工具*/
-            if (Constants.KYRO_SERIALIZATION.equals(serializationType)){
-                bytes = KryoUtil.writeToByteArray(msg);
-            }else{
-                bytes = ProtostuffUtil.serialize(msg);
-            }
+            bytes = ProtostuffUtil.serialize(msg);
             /* 编码器先写对象二进制的长度，方便解码器解码知道，要解码的对象到底多长*/
             out.writeInt(bytes.length);
             out.writeBytes(bytes);

@@ -1,5 +1,7 @@
 package com.cxt.fly.service;
 
+import com.cxt.fly.model.User;
+
 /**
  * @author cxt
  * @date 2018/4/17
@@ -7,8 +9,8 @@ package com.cxt.fly.service;
 public interface HelloWorldService2 {
     /**
      * say
-     * @param username
+     * @param user
      * @return
      */
-    public String say(String username);
+    public String say(User user);
 }

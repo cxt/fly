@@ -1,5 +1,6 @@
 package com.cxt.fly.service.impl;
 
+import com.cxt.fly.model.User;
 import com.cxt.fly.server.RpcService;
 import com.cxt.fly.service.HelloWorldService2;
 
@@ -11,8 +12,9 @@ import com.cxt.fly.service.HelloWorldService2;
  */
 @RpcService(value = HelloWorldService2.class, version = "helloworld2")
 public class HelloWorldService2Impl implements HelloWorldService2 {
+
     @Override
-    public String say(String username) {
-        return "fuck " + username;
+    public String say(User user) {
+        return "fuck " + user.getName() + "whose age is " + user.getAge();
     }
 }

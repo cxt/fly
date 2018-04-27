@@ -17,6 +17,7 @@
 
     <bean id="rpcServer" class="com.cxt.fly.server.RpcServer">
         <constructor-arg name="serviceAddresss" value="${fly.service_address}"/>
+        <constructor-arg name="serializeType" value="${fly.serialize_type}"/>
         <constructor-arg name="zookeeperRegistry" ref="serviceRegistry"/>
     </bean>
 

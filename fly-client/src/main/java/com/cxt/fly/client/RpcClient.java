@@ -1,8 +1,7 @@
 package com.cxt.fly.client;
 
 
-import com.cxt.fly.codec.RpcDecoder;
-import com.cxt.fly.codec.RpcEncoder;
+import com.cxt.fly.codec.*;
 import com.cxt.fly.model.RpcRequest;
 import com.cxt.fly.model.RpcResponse;
 import io.netty.bootstrap.Bootstrap;
@@ -10,6 +9,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +25,13 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
     private final String host;
     private final Integer port;
+    private final String serializeType;
     private RpcResponse response;
 
-    public RpcClient(String host, Integer port) {
+    public RpcClient(String host, Integer port, String serializeType) {
         this.host = host;
         this.port = port;
+        this.serializeType = serializeType;
     }
 
     @Override
@@ -58,8 +61,28 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new RpcEncoder(RpcRequest.class))
-                                    .addLast(new RpcDecoder(RpcResponse.class))
+                            ByteToMessageDecoder decoder = null;
+                            MessageToByteEncoder encoder = null;
+                            /*选择序列化框架*/
+                            switch (serializeType) {
+                                case "kryo":
+                                    encoder = new RpcKryoEncoder(RpcRequest.class);
+                                    decoder = new RpcKryoDecoder(RpcResponse.class);
+                                    break;
+                                case "hessian":
+                                    encoder = new RpcHessianEncoder(RpcRequest.class);
+                                    decoder = new RpcHessianDecoder(RpcResponse.class);
+                                    break;
+                                case "fastjson":
+                                    encoder = new RpcFastjsonEncoder(RpcRequest.class);
+                                    decoder = new RpcFastjsonDecoder(RpcResponse.class);
+                                    break;
+                                default:
+                                    encoder = new RpcProtostuffEncoder(RpcRequest.class);
+                                    decoder = new RpcProtostuffDecoder(RpcResponse.class);
+                            }
+                            pipeline.addLast(encoder)
+                                    .addLast(decoder)
                                     .addLast(RpcClient.this);
                         }
                     });

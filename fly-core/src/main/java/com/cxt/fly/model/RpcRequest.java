@@ -1,5 +1,6 @@
 package com.cxt.fly.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
  * @author cxt
  * @date 2018/2/8
  */
-public class RpcRequest {
+public class RpcRequest implements Serializable {
     private String requestId;
     private String serviceName;
     private String version;

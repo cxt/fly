@@ -1,11 +1,13 @@
 package com.cxt.fly.model;
 
+import java.io.Serializable;
+
 /**
  *  rpc响应的封装
  * @author cxt
  * @date   2018/2/8
  */
-public class RpcResponse {
+public class RpcResponse implements Serializable {
     private String requestId;
     private Exception exception;
     private Object result;

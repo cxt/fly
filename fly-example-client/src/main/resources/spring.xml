@@ -15,6 +15,7 @@
 
     <bean id="rpcProxy" class="com.cxt.fly.client.RpcProxy">
         <constructor-arg name="serviceDiscover" ref="serviceDiscovery"/>
+        <constructor-arg name="serializeType" value="${fly.serialize_type}"/>
     </bean>
 
 </beans>

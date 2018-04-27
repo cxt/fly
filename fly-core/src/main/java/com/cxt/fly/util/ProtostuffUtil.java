@@ -60,6 +60,7 @@ public class ProtostuffUtil {
         Schema<T> schema = (Schema<T>) cachedSchema.get(cls);
         if (schema == null) {
             schema = RuntimeSchema.createFrom(cls);
+            /* 缓存起来 */
             cachedSchema.put(cls, schema);
         }
         return schema;

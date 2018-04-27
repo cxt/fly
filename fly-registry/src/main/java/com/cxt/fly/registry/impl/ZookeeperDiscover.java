@@ -46,10 +46,6 @@ public class ZookeeperDiscover implements ServiceDiscover {
                 address = children.get(ThreadLocalRandom.current().nextInt(children.size()));
             }
 
-            for (String str: children) {
-                System.out.println(str);
-            }
-
             String addressPath = servicePath + "/" + address;
 
             return zkClient.readData(addressPath);

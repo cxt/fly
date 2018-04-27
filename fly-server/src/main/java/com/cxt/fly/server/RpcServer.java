@@ -1,7 +1,6 @@
 package com.cxt.fly.server;
 
-import com.cxt.fly.codec.RpcDecoder;
-import com.cxt.fly.codec.RpcEncoder;
+import com.cxt.fly.codec.*;
 import com.cxt.fly.model.RpcRequest;
 import com.cxt.fly.model.RpcResponse;
 import com.cxt.fly.registry.impl.ZookeeperRegistry;
@@ -13,6 +12,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,16 +30,26 @@ import java.util.Map;
  * @author cxt
  * @date 2018/3/8
  */
-public class RpcServer implements ApplicationContextAware ,InitializingBean{
+public class RpcServer implements ApplicationContextAware, InitializingBean {
 
-    private static  final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
-    /** service address */
+    /**
+     * service address
+     */
     private String serviceAddresss;
-    /** zookeeper registry */
+    /**
+     * zookeeper registry
+     */
     private ZookeeperRegistry zookeeperRegistry;
-    /** service bean map */
-    private Map<String,Object> serviceBeansMap = new HashMap<String, Object>();
+    /**
+     * serialize type, default use protostuff
+     * */
+    private String serializeType;
+    /**
+     * service bean map
+     */
+    private Map<String, Object> serviceBeansMap = new HashMap<String, Object>();
 
     public RpcServer(String serviceAddresss) {
         this.serviceAddresss = serviceAddresss;
@@ -49,8 +60,15 @@ public class RpcServer implements ApplicationContextAware ,InitializingBean{
         this.zookeeperRegistry = zookeeperRegistry;
     }
 
+    public RpcServer(String serviceAddresss, ZookeeperRegistry zookeeperRegistry, String serializeType) {
+        this.serviceAddresss = serviceAddresss;
+        this.zookeeperRegistry = zookeeperRegistry;
+        this.serializeType = serializeType;
+    }
+
     /**
      * before initial bean execute
+     *
      * @param applicationContext
      * @throws BeansException
      */
@@ -58,18 +76,18 @@ public class RpcServer implements ApplicationContextAware ,InitializingBean{
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         /* initial the service bean, and put into the @serviceBeansMap */
         Map<String, Object> objectMap = applicationContext.getBeansWithAnnotation(RpcService.class);
-        if(MapUtils.isNotEmpty(objectMap)){
+        if (MapUtils.isNotEmpty(objectMap)) {
             for (Object serviceObj : objectMap.values()) {
                 /* 通过注解拿到类名和版本号 */
                 RpcService rpcService = serviceObj.getClass().getAnnotation(RpcService.class);
                 String serviceName = rpcService.value().getName();
                 String serviceVersion = rpcService.version();
 
-                if(StringUtils.isNotEmpty(serviceVersion)){
+                if (StringUtils.isNotEmpty(serviceVersion)) {
                     serviceName += serviceVersion;
                 }
 
-                serviceBeansMap.put(serviceName,serviceObj);
+                serviceBeansMap.put(serviceName, serviceObj);
             }
         }
 
@@ -78,6 +96,7 @@ public class RpcServer implements ApplicationContextAware ,InitializingBean{
 
     /**
      * 在初始化属性后执行,创建netty bootstrap 对象
+     *
      * @throws Exception
      */
     @Override
@@ -91,9 +110,30 @@ public class RpcServer implements ApplicationContextAware ,InitializingBean{
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            ByteToMessageDecoder decoder = null;
+                            MessageToByteEncoder encoder = null;
+                            /*选择序列化框架*/
+                            switch (serializeType) {
+                                case "kryo":
+                                    decoder = new RpcKryoDecoder(RpcRequest.class);
+                                    encoder = new RpcKryoEncoder(RpcResponse.class);
+                                    break;
+                                case "hessian":
+                                    decoder = new RpcHessianDecoder(RpcRequest.class);
+                                    encoder = new RpcHessianEncoder(RpcResponse.class);
+                                    break;
+                                case "fastjson":
+                                    decoder = new RpcFastjsonDecoder(RpcRequest.class);
+                                    encoder = new RpcFastjsonEncoder(RpcResponse.class);
+                                    break;
+                                default:
+                                    decoder = new RpcProtostuffDecoder(RpcRequest.class);
+                                    encoder = new RpcProtostuffEncoder(RpcResponse.class);
+                            }
+
                             /*绑定解码器和编码器*/
-                            ch.pipeline().addLast(new RpcDecoder(RpcRequest.class))
-                                    .addLast(new RpcEncoder(RpcResponse.class))
+                            ch.pipeline().addLast(decoder)
+                                    .addLast(encoder)
                                     .addLast(new RpcServerHandler(serviceBeansMap));
                         }
                     });
@@ -110,14 +150,14 @@ public class RpcServer implements ApplicationContextAware ,InitializingBean{
 
             // 注册 RPC 服务地址
             if (MapUtils.isNotEmpty(serviceBeansMap)) {
-                for (String serviceName: serviceBeansMap.keySet()) {
-                    this.zookeeperRegistry.register(serviceName,serviceAddresss);
+                for (String serviceName : serviceBeansMap.keySet()) {
+                    this.zookeeperRegistry.register(serviceName, serviceAddresss);
                 }
             }
 
-            LOGGER.debug("server start!!!");
+            LOGGER.debug("server started!!!");
             future.channel().closeFuture().sync();
-        }finally {
+        } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }

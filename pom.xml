@@ -201,9 +201,7 @@
         <module>fly-server</module>
         <module>fly-client</module>
         <module>fly-registry</module>
-        <module>fly-example-api</module>
-        <module>fly-example-server</module>
-        <module>fly-example-client</module>
+        <module>fly-example</module>
     </modules>
 
 </project>

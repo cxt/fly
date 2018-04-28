@@ -9,18 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fly-example-server</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.cxt.fly</groupId>
-            <artifactId>fly-server</artifactId>
-            <version>${version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cxt.fly</groupId>
-            <artifactId>fly-example-api</artifactId>
-            <version>${version}</version>
-        </dependency>
-    </dependencies>
+    <artifactId>fly-example</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>fly-example-api</module>
+        <module>fly-example-client</module>
+        <module>fly-example-server</module>
+    </modules>
+
 
 </project>

@@ -26,7 +26,7 @@ zkServer.cmd
 在fly-example/fly-example-server下面找到FlyBootstrap类执行main方法即可。
 ### 四、运行客户端
 在fly-example/fly-example-client下面找到HelloWorldClient或者HelloWorldClient2,运行其main方法即可。
-## 设计
+## 五、设计
 ## 服务治理
 服务治理，一般是服务发现，服务注册，负载均衡等功能，这里我们是用zookeeper来做的。
 ### 服务注册

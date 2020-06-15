@@ -22,7 +22,7 @@
         <version.zookeeper>3.4.6</version.zookeeper>
         <version.zkclient>0.4</version.zkclient>
         <version.commons-lang>3.3.2</version.commons-lang>
-        <version.commons-collections>4.0</version.commons-collections>
+        <version.commons-collections>4.1</version.commons-collections>
         <version.kryo-shaded>4.0.0</version.kryo-shaded>
         <version.commons-codec>1.10</version.commons-codec>
         <version.hessian>4.0.38</version.hessian>

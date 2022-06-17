@@ -26,7 +26,7 @@
         <version.kryo-shaded>4.0.0</version.kryo-shaded>
         <version.commons-codec>1.10</version.commons-codec>
         <version.hessian>4.0.38</version.hessian>
-        <version.fastjson>1.2.46</version.fastjson>
+        <version.fastjson>1.2.83</version.fastjson>
         <version.maven-compiler-plugin>3.2</version.maven-compiler-plugin>
         <version.maven-surefire-plugin>2.18.1</version.maven-surefire-plugin>
         <version.maven-source-plugin>2.4</version.maven-source-plugin>
